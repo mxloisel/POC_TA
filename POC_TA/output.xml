@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 6.1 (Python 3.11.4 on win32)" generated="20230804 11:02:05.960" rpa="false" schemaversion="4">
+<suite id="s1" name="Database" source="c:\Users\ma_loisel\Documents\Projets\POC_TA\Tests\TNR\database.robot">
+<test id="s1-t1" name="Connect to MySQL via SSH with SSH Key File" line="44">
+<kw name="Initialize SSH Tunnel">
+<kw name="Open Connection" library="SSHLibrary">
+<arg>host=${SSH_HOST}</arg>
+<arg>port=${SSH_PORT}</arg>
+<arg>timeout=60s</arg>
+<doc>Opens a new SSH connection to the given ``host`` and ``port``.</doc>
+<status status="PASS" starttime="20230804 11:02:06.140" endtime="20230804 11:02:06.141"/>
+</kw>
+<kw name="Login With Public Key" library="SSHLibrary">
+<arg>${SSH_USERNAME}</arg>
+<arg>${SSH_KEY_FILE}</arg>
+<doc>Logs into the SSH server using key-based authentication.</doc>
+<msg timestamp="20230804 11:02:06.141" level="INFO">Logging into '15.237.158.69:22' as 'ec2-user'.</msg>
+<msg timestamp="20230804 11:02:09.057" level="INFO">Read output: Last login: Fri Aug  4 14:48:23 2023 from 136.226.59.101
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+117 package(s) needed for security, out of 161 available
+Run "sudo yum update" to apply all updates.
+[ec2-user@ip-10-17-42-137 ~]$</msg>
+<status status="PASS" starttime="20230804 11:02:06.141" endtime="20230804 11:02:09.057"/>
+</kw>
+<status status="PASS" starttime="20230804 11:02:06.140" endtime="20230804 11:02:09.058"/>
+</kw>
+<kw name="Get Connection" library="SSHLibrary">
+<var>${farhost}</var>
+<doc>Returns information about the connection.</doc>
+<msg timestamp="20230804 11:02:09.060" level="INFO">index=1
+host=15.237.158.69
+alias=None
+port=22
+timeout=1 minute
+newline=
+
+prompt=None
+term_type=vt100
+width=80
+height=24
+path_separator=/
+encoding=UTF-8
+escape_ansi=False
+encoding_errors=strict</msg>
+<msg timestamp="20230804 11:02:09.061" level="INFO">${farhost} = index=1
+host=15.237.158.69
+alias=None
+port=22
+timeout=1 minute
+newline=
+
+prompt=None
+term_type=vt100
+width=80
+height=24
+path_separator=/
+encoding=UTF-8
+escape_ansi=False
+encoding_errors=strict</msg>
+<status status="PASS" starttime="20230804 11:02:09.059" endtime="20230804 11:02:09.061"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>${farhost}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" starttime="20230804 11:02:09.062" endtime="20230804 11:02:09.065"/>
+</kw>
+<kw name="Execute Simple Request To Database">
+<arg>select count(*) from group_extra</arg>
+<tag>Update</tag>
+<kw name="Execute Command" library="SSHLibrary">
+<var>${output}</var>
+<arg>ls</arg>
+<doc>Executes ``command`` on the remote machine and returns its outputs.</doc>
+<msg timestamp="20230804 11:02:09.067" level="INFO">Executing command 'ls'.</msg>
+<msg timestamp="20230804 11:02:09.401" level="INFO">Command exited with return code 0.</msg>
+<msg timestamp="20230804 11:02:09.402" level="INFO">${output} = mariadb_repo_setup</msg>
+<status status="PASS" starttime="20230804 11:02:09.067" endtime="20230804 11:02:09.402"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Output = ${output}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" starttime="20230804 11:02:09.402" endtime="20230804 11:02:09.404"/>
+</kw>
+<kw name="Execute Command" library="SSHLibrary">
+<var>${output2}</var>
+<arg>mysql --host=${DB_HOST} --user=${DB_USER} --password=${DB_PASS} ${DB_NAME} -e '${request}'</arg>
+<doc>Executes ``command`` on the remote machine and returns its outputs.</doc>
+<msg timestamp="20230804 11:02:09.405" level="INFO">Executing command 'mysql --host=rentalis-ppd.cdabkjojq9t6.eu-west-3.rds.amazonaws.com --user=pQLPb4V5oOUu7KEh --password=8DCbOprtKKofHRf* loc_ppd_backend -e 'select count(*) from group_extra''.</msg>
+<msg timestamp="20230804 11:02:09.914" level="INFO">Command exited with return code 0.</msg>
+<msg timestamp="20230804 11:02:09.914" level="INFO">${output2} = count(*)
+71</msg>
+<status status="PASS" starttime="20230804 11:02:09.404" endtime="20230804 11:02:09.915"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Output2 = ${output2}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" starttime="20230804 11:02:09.915" endtime="20230804 11:02:09.918"/>
+</kw>
+<status status="PASS" starttime="20230804 11:02:09.067" endtime="20230804 11:02:09.918"/>
+</kw>
+<kw name="Disconnect From Database" library="DatabaseLibrary">
+<doc>Disconnects from the database.
+By default it's not an error if there was no open database connection -
+suitable for usage as a teardown.
+However you can enforce it using the `error_if_no_connection` parameter.</doc>
+<msg timestamp="20230804 11:02:09.920" level="INFO">Executing : Disconnect From Database</msg>
+<msg timestamp="20230804 11:02:09.920" level="INFO">No open database connection to close</msg>
+<status status="PASS" starttime="20230804 11:02:09.919" endtime="20230804 11:02:09.920"/>
+</kw>
+<kw name="Close All Connections" library="SSHLibrary">
+<doc>Closes all open connections.</doc>
+<status status="PASS" starttime="20230804 11:02:09.922" endtime="20230804 11:02:09.924"/>
+</kw>
+<tag>Database</tag>
+<status status="PASS" starttime="20230804 11:02:06.139" endtime="20230804 11:02:09.925"/>
+</test>
+<status status="PASS" starttime="20230804 11:02:05.969" endtime="20230804 11:02:09.928"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0" skip="0">Database</stat>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="Database">Database</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
